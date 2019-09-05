@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version: 1.0.0
  */
 @Controller
-public class HelloController {
+public class IndexController {
 
     @GetMapping("/")
-    public String hello(Model model){
-        model.addAttribute("message","你好");
+    public String hello(){
         return "index";
     }
 }
