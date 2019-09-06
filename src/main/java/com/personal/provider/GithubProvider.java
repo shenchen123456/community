@@ -4,6 +4,7 @@ import com.personal.dto.AccessTokenDTO;
 import com.personal.dto.GithubUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -25,11 +26,16 @@ public class GithubProvider {
      * @return accessToken
      */
     public String getAccessToken(AccessTokenDTO accessTokenDTO) {
-        String accesstokenAll = restTemplate.postForObject("https://github.com/login/oauth/access_token", accessTokenDTO, String.class);
-        //System.out.println(accesstokenAll);
-        //分割传来的字符串获取 accesstoken
-        String accesstoken = (accesstokenAll.split("&")[0]).
-                            split("=")[1];
+        String accesstoken = null;
+        try {
+            String accesstokenAll = restTemplate.postForObject("https://github.com/login/oauth/access_token", accessTokenDTO, String.class);
+            //System.out.println(accesstokenAll);
+            //分割传来的字符串获取 accesstoken
+            accesstoken = (accesstokenAll.split("&")[0]).
+                                split("=")[1];
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
         return accesstoken;
     }
 
@@ -39,8 +45,13 @@ public class GithubProvider {
      * @return 用户信息
      */
     public GithubUser getUser(String accessToken) {
-        GithubUser githubUser = restTemplate.getForObject("https://api.github.com/user?access_token=" + accessToken, GithubUser.class);
-        //System.out.println(githubUser);
+        GithubUser githubUser = null;
+        try {
+            githubUser = restTemplate.getForObject("https://api.github.com/user?access_token=" + accessToken, GithubUser.class);
+            //System.out.println(githubUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return githubUser;
     }
 }

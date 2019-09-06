@@ -10,7 +10,10 @@ import lombok.Data;
  */
 @Data
 public class GithubUser {
-    private String name;
     private Long id;
+    private String login;
+    private String name;
+    private String email;
+    private String company;
     private String bio;
 }

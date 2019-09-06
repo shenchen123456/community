@@ -1,3 +1,26 @@
 spring:
   thymeleaf:
     cache: false
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.230.128:3306/community?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 10000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+
+github:
+  clientId: 45433d33477f5f586e86
+  clientSecret: c687abc8dce5abb3328f7e0e1d1e946bcb9ab8e4
+  redirectUri: http://localhost:8080/callback
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true

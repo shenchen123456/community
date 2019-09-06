@@ -1,0 +1,20 @@
+body{
+    background-color: #efefef;
+}
+
+.main{
+    margin: 30px;
+    background-color: white;
+}
+
+.publish-btn{
+    float: right;
+}
+
+.div-title{
+    width: 600px;
+}
+
+.div-tag{
+    width: 200px;
+}
