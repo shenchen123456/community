@@ -4,6 +4,7 @@ import com.personal.entity.Question;
 import com.personal.entity.User;
 import com.personal.provider.CookieProvider;
 import com.personal.service.QuestionService;
+import com.personal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,36 +28,43 @@ public class PublishController {
     QuestionService questionService;
 
     @Autowired
-    CookieProvider cookieProvider;
+    UserService userService;
 
     @GetMapping("/publish")
     public String publish(HttpServletRequest httpServletRequest) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-
-        User user = cookieProvider.getUserByToken(cookies);
-
-        if (null != user) {
-            httpServletRequest.getSession().setAttribute("username", user.getAccountId());
-        }
 
         return "publish";
     }
 
     @PostMapping("/publish")
     public String doPublish(
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("tag") String tag,
+            @RequestParam(value = "title",required = false) String title,
+            @RequestParam(value = "description" ,required = false) String description,
+            @RequestParam(value = "tag",required = false) String tag,
             HttpServletRequest httpServletRequest,
             Model model) {
-        Cookie[] cookies = httpServletRequest.getCookies();
+        //后端校验标题，描述，标签不能为空
+        if (null == title || "".equals(title)) {
+            model.addAttribute("error","标题不能为空");
+            return "publish";
+        }
+        if (null == description || "".equals(description)) {
+            model.addAttribute("error","描述不能为空");
+            return "publish";
+        }if (null == tag || "".equals(tag)) {
+            model.addAttribute("error","标签不能为空");
+            return "publish";
+        }
+        //后端校验用户是否登录
+        String username = (String) httpServletRequest.getSession().getAttribute("username");
 
-        User user = cookieProvider.getUserByToken(cookies);
-
-        if (null == user) {
+        if (null == username) {
             model.addAttribute("error", "用户未登录");
             return "publish";
         }
+
+        User user = userService.findOneByName(username);
+
 
         questionService.insertQuestion(new Question()
                 .setTitle(title)

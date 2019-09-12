@@ -1,6 +1,7 @@
 package com.personal.service;
 
 import com.personal.entity.User;
+import com.personal.vo.UserVO;
 
 /**
  * @Auther: Chen
@@ -13,4 +14,11 @@ public interface UserService {
     boolean insertUser(User user);
 
     User findOneByToken(String token);
+
+    User findOneByAccountId(String accountId);
+
+    User findOneByName(String name);
+
+
+    UserVO findOneByIdWithQuestion(Integer id);
 }

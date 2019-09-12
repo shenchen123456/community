@@ -1,9 +1,11 @@
-package com.personal.entity;
+package com.personal.vo;
 
+import com.personal.entity.Question;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: Chen
@@ -12,13 +14,10 @@ import java.util.Date;
  * @Version: 1.0.0
  */
 @Data
-@Accessors(chain = true)
-public class User {
+public class UserVO {
 
     private Integer id;
-    private String accountId;
     private String name;
-    private String token;
-    private Date createTime;
     private String avatarUrl;
+    List<Question> questions;
 }

@@ -7,50 +7,124 @@
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
 
     <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" th:href="@{css/community.css}"/>
 
     <script src="js/jquery-3.4.1.min.js"></script>
 
     <script src="js/bootstrap.min.js"></script>
+
 </head>
 <body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">My Community</span>
-            </button>
-            <a class="navbar-brand" href="#">My Community</a>
-        </div>
+//头信息
+<div th:replace="header :: navigation"></div>
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="搜索问题">
-                </div>
-                <button type="submit" class="btn btn-default">搜索</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li th:if="${session.username != null}">
-                    <a href="/publish">发布</a>
-                </li>
-                <li class="dropdown" th:if="${session.username != null}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false" th:text="${session.username}">
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">个人资料</a></li>
-                        <li><a href="#">消息中心</a></li>
-                        <li><a href="#">退出登录</a></li>
-                    </ul>
-                </li>
-                <li th:if="${session.username == null}">
-                    <a href="https://github.com/login/oauth/authorize?client_id=45433d33477f5f586e86&redirect_uri=http://localhost:8080/callback&scope=user&state=1">登录</a>
-                </li>
-            </ul>
+
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12">
+            <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span>发现</h2>
+            <hr>
+            <div id="context">
+
+            </div>
+            <div id="pageNav">
+
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-12">
+            <h3>热门话题</h3>
         </div>
     </div>
-</nav>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        to_page(1);
+    })
+
+    function to_page(currentPage) {
+        $.ajax({
+            url: "/questions",
+            data: "currentPage=" + currentPage,
+            type: "GET",
+            success: function (result) {
+                //构建问题
+                build_questions(result);
+
+                //构建分页
+                build_pageNav(result);
+            }
+        })
+    }
+
+    function build_questions(result) {
+
+        $("#context").empty();
+
+        var questions = result.list;
+
+        $.each(questions, function (index, item) {
+            var divBody = $("<div></div>").addClass("media");
+
+            var userImg = $("<img/>").addClass("media-object img-rounded user-img").attr("src", item.user.avatarUrl);
+            var lianjie = $("<a></a>").attr("href", item.user.avatarUrl).append(userImg);
+            var divInnerLeft = $("<div></div>").addClass("media-left").append(lianjie);
+
+            var title = $("<h4></h4>").addClass("media-heading").append(item.title);
+            var description = $("<p></p>").append(item.description);
+            var br = $("<br/>");
+            var footer = $("<span></span>").addClass("text-desc").append(item.commentCount + "个回复 · " + item.viewCount + "次浏览 · " + item.createTime)
+            var divInnerBody = $("<div></div>").addClass("media-body")
+                .append(title)
+                .append(description)
+                .append(br)
+                .append(footer);
+
+            divBody.append(divInnerLeft).append(divInnerBody);
+
+            $("#context").append(divBody);
+        })
+    }
+
+    function build_pageNav(result) {
+        $("#pageNav").empty();
+
+        var prePage = result.prePage;
+        var nextPage = result.nextPage;
+
+        var previous_span = $("<span></span>").attr("aria-hidden","true").append("&larr;");
+        var previous_a = $("<a></a>").append(previous_span).append(" Previous");
+        var previous_li = $("<li></li>").addClass("previous").append(previous_a);
+
+        //如果是第一页
+        if(result.hasPreviousPage == false){
+            previous_li.addClass("disabled");
+        }else {
+            previous_li.click(function () {
+                to_page(result.pageNum - 1);
+            })
+        }
+
+        var next_span = $("<span></span>").attr("aria-hidden","true").append("&rarr;");
+        var next_a = $("<a></a>").append(next_span).append("nextPage");
+        var next_li = $("<li></li>").addClass("next").append(next_a);
+
+        //如果是最后一页
+        if(result.hasNextPage == false){
+            next_li.addClass("disabled");
+        }else {
+            next_li.click(function () {
+                to_page(result.pageNum + 1);
+            })
+        }
+
+        var ul = $("<ul></ul>").addClass("pager").append(previous_li).append(next_li);
+
+        $("#pageNav").append($("<nav></nav>").append(ul));
+    }
+
+
+</script>
+
 </body>
 </html>

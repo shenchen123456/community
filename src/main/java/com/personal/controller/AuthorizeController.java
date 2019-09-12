@@ -58,10 +58,20 @@ public class AuthorizeController {
 
         GithubUser user = githubProvider.getUser(accessToken);
 
-        if (user !=null){
+        User result = userService.findOneByAccountId(user.getId()+"");
+        //数据通过AccountId查询到对应的用户，直接放行
+        if (null != result) {
+
+            httpServletResponse.addCookie(new Cookie("token",result.getToken()));
+
+            return "redirect:/";
+        }
+
+        //登录成功，且数据库通过AccountId没查询到对应的用户，则认为是新用户
+        if (user != null & result == null){
             String token = UUID.randomUUID().toString();
             //插入数据库持久化
-            userService.insertUser(new User().setAccountId(user.getLogin()).setName(user.getName()).setToken(token));
+            userService.insertUser(new User().setAccountId(user.getId()+"").setName(user.getLogin()).setToken(token).setAvatarUrl(user.getAvatar_url()));
 
             //将验证用户的token发送给客户端
             httpServletResponse.addCookie(new Cookie("token",token));

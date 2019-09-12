@@ -18,3 +18,19 @@ body{
 .div-tag{
     width: 200px;
 }
+
+.user-img{
+    width: 38px;
+    height: 38px;
+}
+
+.text-desc{
+    font-size: 12px;
+    font-weight: normal;
+    color: #999999;
+}
+
+.div-alert{
+    width: 200px;
+    height: 34px;
+}

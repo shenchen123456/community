@@ -1,6 +1,10 @@
 package com.personal.service;
 
+import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
+import com.personal.vo.QuestionVO;
+
+import java.util.List;
 
 /**
  * @Auther: Chen
@@ -11,4 +15,6 @@ import com.personal.entity.Question;
 public interface QuestionService {
 
     boolean insertQuestion(Question question);
+
+    PageInfo<QuestionVO> getQuestions(Integer size, Integer currentPage);
 }
