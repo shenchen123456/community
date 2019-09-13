@@ -1,14 +1,11 @@
 package com.personal;
 
-import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
-import com.personal.entity.User;
+import com.personal.entity.QuestionExample;
 import com.personal.mapper.QuestionMapper;
 import com.personal.service.QuestionService;
-import com.personal.service.UserService;
 import com.personal.service.impl.UserServiceImpl;
 import com.personal.vo.QuestionVO;
-import com.personal.vo.UserVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -27,6 +23,10 @@ public class CommunityApplicationTests {
 
     @Autowired
     QuestionService questionService;
+
+
+    @Autowired
+    QuestionMapper questionMapper;
 
     @Test
     public void testUserService() {
@@ -48,10 +48,16 @@ public class CommunityApplicationTests {
         //PageInfo<QuestionVO> questions = questionService.getQuestions(3, 1);
         //System.out.println(questions);
 
-        QuestionVO oneQuestionByIdWithUser = questionService.findOneQuestionByIdWithUser(2);
 
-        System.out.println(oneQuestionByIdWithUser);
     }
 
+    @Test
+    public void testQuestionMapper() {
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreatorEqualTo(1);
 
+        //List<Question> questions = questionMapper.selectByExample(questionExample);
+        //System.out.println(questions);
+
+    }
 }

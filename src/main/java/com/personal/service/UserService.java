@@ -16,9 +16,9 @@ public interface UserService {
 
     User findOneByToken(String token);
 
-    User findOneByName(String name);
-
     UserVO getUserWithAllQuestion(Integer id,Integer currentPage,Integer size);
 
     User checkUser(GithubUser user);
+
+    User findOneByNameAndId(String username, Integer userId);
 }

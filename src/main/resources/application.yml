@@ -17,15 +17,16 @@ spring:
 
 github:
   clientId: 45433d33477f5f586e86
-  clientSecret: 313e4930111ebab0925a6aee9d8c7b417b9ae89e
+  clientSecret: 9eb026086ed424bd414a71df035c7f79f0791feb
   redirectUri: http://localhost:8080/callback
 
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
 
 logging:
   level:
-    com.personal.mapper.*: debug
+    com.personal.mapper.CommentMapper: debug
 

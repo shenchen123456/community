@@ -1,6 +1,7 @@
 package com.personal.mapper;
 
 import com.personal.entity.Question;
+import com.personal.entity.QuestionExample;
 import com.personal.vo.QuestionVO;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
@@ -14,6 +15,29 @@ import java.util.List;
  * @Version: 1.0.0
  */
 public interface QuestionMapper {
+
+    long countByExample(QuestionExample example);
+
+    int deleteByExample(QuestionExample example);
+
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(Question record);
+
+    int insertSelective(Question record);
+
+    List<Question> selectByExample(QuestionExample example);
+
+    Question selectByPrimaryKey(Integer id);
+
+    int updateByExampleSelective(@Param("record") Question record, @Param("example") QuestionExample example);
+
+    int updateByExample(@Param("record") Question record, @Param("example") QuestionExample example);
+
+    int updateByPrimaryKeySelective(Question record);
+
+    int updateByPrimaryKey(Question record);
+
 
     @Insert("insert into question(title, description, creator, tag) values(#{title},#{description},#{creator},#{tag})")
     boolean insertQuestion(Question question);

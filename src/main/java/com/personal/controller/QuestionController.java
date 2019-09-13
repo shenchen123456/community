@@ -1,16 +1,12 @@
 package com.personal.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.personal.exception.CustomizeErrorCode;
-import com.personal.exception.CustomizeException;
 import com.personal.service.QuestionService;
 import com.personal.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 /**
@@ -40,6 +36,9 @@ public class QuestionController {
     public String getQuestionByIdWithUser(@PathVariable("id")Integer id,
                                           Model model){
         QuestionVO question = questionService.findOneQuestionByIdWithUser(id);
+
+        //浏览数+1
+        questionService.incrementView(id);
 
         model.addAttribute("question",question);
 

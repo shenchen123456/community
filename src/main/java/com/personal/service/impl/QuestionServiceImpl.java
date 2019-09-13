@@ -3,8 +3,9 @@ package com.personal.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
-import com.personal.exception.CustomizeErrorCode;
+import com.personal.exception.CustomizeErrorEnum;
 import com.personal.exception.CustomizeException;
+import com.personal.mapper.QuestionExtMapper;
 import com.personal.mapper.QuestionMapper;
 import com.personal.service.QuestionService;
 import com.personal.vo.QuestionVO;
@@ -26,12 +27,10 @@ public class QuestionServiceImpl implements QuestionService {
     QuestionMapper questionMapper;
 
     @Autowired
-    PageHelper pageHelper;
+    QuestionExtMapper questionExtMapper;
 
-    public boolean insertQuestion(Question question){
-        System.out.println(question);
-        return questionMapper.insertQuestion(question);
-    }
+    @Autowired
+    PageHelper pageHelper;
 
     @Override
     public PageInfo<QuestionVO> getQuestions(Integer size, Integer currentPage) {
@@ -45,7 +44,7 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionVO findOneQuestionByIdWithUser (Integer id) {
         QuestionVO question = questionMapper.findOneQuestionByIdWithUser(id);
         if (null == question) {
-            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            throw new CustomizeException(CustomizeErrorEnum.QUESTION_NOT_FOUND);
         }
         return question;
     }
@@ -64,16 +63,22 @@ public class QuestionServiceImpl implements QuestionService {
             if(question.getTag().equals(dbQuestion.getTag()) &&
                     question.getTitle().equals(dbQuestion.getTitle()) &&
                     question.getDescription().equals(dbQuestion.getDescription())) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_MODIFY);
+                throw new CustomizeException(CustomizeErrorEnum.QUESTION_NOT_MODIFY);
             }
         }
         boolean result = questionMapper.updateQuestion(question);
 
         if (false == result) {
-            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            throw new CustomizeException(CustomizeErrorEnum.QUESTION_NOT_FOUND);
         }
 
         return result;
+    }
+
+    @Override
+    public void incrementView(Integer id) {
+        Question record = new Question().setId(id).setViewCount(1);
+        questionExtMapper.incrementView(record);
     }
 
 }

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.personal.dto.GithubUser;
 import com.personal.entity.Question;
 import com.personal.entity.User;
+import com.personal.entity.UserExample;
 import com.personal.mapper.QuestionMapper;
 import com.personal.mapper.UserMapper;
 import com.personal.service.UserService;
@@ -26,10 +27,10 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserMapper userMapper;
+    UserMapper userMapper;
 
     @Autowired
-    private QuestionMapper questionMapper;
+    QuestionMapper questionMapper;
 
     @Autowired
     PageHelper pageHelper;
@@ -37,12 +38,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findOneByToken(String token) {
         return userMapper.findOneByToken(token);
-    }
-
-
-    @Override
-    public User findOneByName(String name) {
-        return userMapper.findOneByName(name);
     }
 
     @Override
@@ -96,6 +91,16 @@ public class UserServiceImpl implements UserService {
                 User newUser = userMapper.findOneByAccountId(user.getId() + "");
                 return newUser;
             }
+        }
+        return null;
+    }
+
+    @Override
+    public User findOneByNameAndId(String username, Integer userId) {
+
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (null != user && username.equals(user.getName())){
+            return user;
         }
         return null;
     }

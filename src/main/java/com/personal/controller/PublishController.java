@@ -69,13 +69,19 @@ public class PublishController {
         }
         //后端校验用户是否登录
         String username = (String) httpServletRequest.getSession().getAttribute("username");
+        Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
 
-        if (null == username) {
+        if (null == username && null ==userId){
+            model.addAttribute("error", "用户未登录");
+        }
+
+        User user = userService.findOneByNameAndId(username,userId);
+
+        if (null == user) {
             model.addAttribute("error", "用户未登录");
             return "publish";
         }
 
-        User user = userService.findOneByName(username);
 
         questionService.checkQuestion(new Question()
                 .setId(id)

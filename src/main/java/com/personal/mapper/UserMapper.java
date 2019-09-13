@@ -1,9 +1,12 @@
 package com.personal.mapper;
 
 import com.personal.entity.User;
+import com.personal.entity.UserExample;
 import com.personal.vo.UserVO;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
+
+import java.util.List;
 
 /**
  * @Auther: Chen
@@ -12,7 +15,31 @@ import org.apache.ibatis.mapping.FetchType;
  * @Version: 1.0.0
  */
 public interface UserMapper {
+    //XML
+    long countByExample(UserExample example);
 
+    int deleteByExample(UserExample example);
+
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(User record);
+
+    int insertSelective(User record);
+
+    List<User> selectByExample(UserExample example);
+
+    User selectByPrimaryKey(Integer id);
+
+    int updateByExampleSelective(@Param("record") User record, @Param("example") UserExample example);
+
+    int updateByExample(@Param("record") User record, @Param("example") UserExample example);
+
+    int updateByPrimaryKeySelective(User record);
+
+    int updateByPrimaryKey(User record);
+
+
+    //注解
     @Select("select id,account_id,name,token,create_time,update_time,avatar_url from user where token=#{token}")
     User findOneByToken(String token);
 

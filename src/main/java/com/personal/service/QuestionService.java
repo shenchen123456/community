@@ -12,8 +12,6 @@ import com.personal.vo.QuestionVO;
  */
 public interface QuestionService {
 
-    boolean insertQuestion(Question question);
-
     PageInfo<QuestionVO> getQuestions(Integer size, Integer currentPage);
 
     QuestionVO findOneQuestionByIdWithUser(Integer id);
@@ -21,4 +19,6 @@ public interface QuestionService {
     Question findOneById(Integer id);
 
     boolean checkQuestion(Question question);
+
+    void incrementView(Integer id);
 }

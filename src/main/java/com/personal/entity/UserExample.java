@@ -1,4 +1,4 @@
-package entity;
+package com.personal.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
