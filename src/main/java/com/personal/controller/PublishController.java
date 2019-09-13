@@ -77,17 +77,12 @@ public class PublishController {
 
         User user = userService.findOneByName(username);
 
-        boolean result = questionService.checkQuestion(new Question()
+        questionService.checkQuestion(new Question()
                 .setId(id)
                 .setTitle(title)
                 .setDescription(description)
                 .setTag(tag)
                 .setCreator(user.getId()));
-
-        if (result == false){
-            model.addAttribute("error","问题不存在");
-            return "publish";
-        }
 
         return "redirect:/";
     }

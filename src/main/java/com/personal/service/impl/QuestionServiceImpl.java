@@ -3,6 +3,8 @@ package com.personal.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
+import com.personal.exception.CustomizeErrorCode;
+import com.personal.exception.CustomizeException;
 import com.personal.mapper.QuestionMapper;
 import com.personal.service.QuestionService;
 import com.personal.vo.QuestionVO;
@@ -40,8 +42,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public QuestionVO findOneQuestionByIdWithUser(Integer id) {
+    public QuestionVO findOneQuestionByIdWithUser (Integer id) {
         QuestionVO question = questionMapper.findOneQuestionByIdWithUser(id);
+        if (null == question) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         return question;
     }
 
@@ -59,11 +64,14 @@ public class QuestionServiceImpl implements QuestionService {
             if(question.getTag().equals(dbQuestion.getTag()) &&
                     question.getTitle().equals(dbQuestion.getTitle()) &&
                     question.getDescription().equals(dbQuestion.getDescription())) {
-                return false;
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_MODIFY);
             }
         }
-
         boolean result = questionMapper.updateQuestion(question);
+
+        if (false == result) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
 
         return result;
     }

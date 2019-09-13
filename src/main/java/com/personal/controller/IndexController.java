@@ -34,13 +34,4 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("/question/{id}")
-    public String getQuestionByIdWithUser(@PathVariable("id")Integer id,
-                                          Model model){
-        QuestionVO question = questionService.findOneQuestionByIdWithUser(id);
-
-        model.addAttribute("question",question);
-
-        return "question";
-    }
 }
