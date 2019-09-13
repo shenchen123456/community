@@ -1,5 +1,6 @@
 package com.personal.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -16,9 +17,16 @@ import java.util.Date;
 public class User {
 
     private Integer id;
+
     private String accountId;
+
     private String name;
+
     private String token;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date updateTime;
+
     private String avatarUrl;
 }

@@ -58,27 +58,25 @@ public class AuthorizeController {
 
         GithubUser user = githubProvider.getUser(accessToken);
 
-        User result = userService.findOneByAccountId(user.getId()+"");
-        //数据通过AccountId查询到对应的用户，直接放行
-        if (null != result) {
+        //检查数据是否存在该用户,用户存在数据不一样则更新
+        User result = userService.checkUser(user);
+        if (null != result && null !=user) {
 
             httpServletResponse.addCookie(new Cookie("token",result.getToken()));
 
             return "redirect:/";
         }
-
         //登录成功，且数据库通过AccountId没查询到对应的用户，则认为是新用户
-        if (user != null & result == null){
+        if(null !=user && result ==null ){
             String token = UUID.randomUUID().toString();
             //插入数据库持久化
-            userService.insertUser(new User().setAccountId(user.getId()+"").setName(user.getLogin()).setToken(token).setAvatarUrl(user.getAvatar_url()));
-
-            //将验证用户的token发送给客户端
+            userService.insertUser(new User().setAccountId(user.getId()+"")
+                    .setName(user.getLogin())
+                    .setToken(token)
+                    .setAvatarUrl(user.getAvatar_url()));
+            //System.out.println(user.getName());
             httpServletResponse.addCookie(new Cookie("token",token));
-
-            return "redirect:/";
         }
-        //System.out.println(user.getName());
         return "redirect:/";
     }
 }

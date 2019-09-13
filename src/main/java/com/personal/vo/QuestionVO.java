@@ -23,6 +23,8 @@ public class QuestionVO {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date updateTime;
     private Integer commentCount;
     private Integer viewCount;
     private Integer likeCount;

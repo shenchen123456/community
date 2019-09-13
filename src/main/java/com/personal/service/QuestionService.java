@@ -4,8 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
 import com.personal.vo.QuestionVO;
 
-import java.util.List;
-
 /**
  * @Auther: Chen
  * @Data: 2019/9/6
@@ -17,4 +15,10 @@ public interface QuestionService {
     boolean insertQuestion(Question question);
 
     PageInfo<QuestionVO> getQuestions(Integer size, Integer currentPage);
+
+    QuestionVO findOneQuestionByIdWithUser(Integer id);
+
+    Question findOneById(Integer id);
+
+    boolean checkQuestion(Question question);
 }

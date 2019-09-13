@@ -34,6 +34,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         if (null !=user){
             request.getSession().setAttribute("username",user.getName());
+            request.getSession().setAttribute("userId",user.getId());
         }
 
         return true;

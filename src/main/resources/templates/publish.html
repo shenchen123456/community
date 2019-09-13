@@ -4,15 +4,15 @@
     <title>Title</title>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
 
-    <link rel="stylesheet" href="css/community.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
 
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
 
-    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
 
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
 //头信息
@@ -23,19 +23,20 @@
     <div class="row">
         <div class="col-lg-9 col-md-12">
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true">发起</span></h2>
-            <hr>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <form action="/publish" method="post">
+                <input type="hidden" name="id" th:value="${question.id}">
                 <div class="form-group div-title">
                     <label for="title">问题标题 (简明扼要) :</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="问题标题....">
+                    <input th:value="${question.title}" type="text" class="form-control" id="title" name="title" placeholder="问题标题....">
                 </div>
                 <div class="form-group">
                     <label for="title">问题补充 (必填,请参照右侧) :</label>
-                    <textarea class="form-control" name="description" id="description" cols="30" rows="10"></textarea>
+                    <textarea th:text="${question.description}" class="form-control" name="description" id="description" cols="30" rows="10" ></textarea>
                 </div>
                 <div class="form-group div-tag">
                     <label for="tag">添加标签</label>
-                    <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签.以逗号分隔">
+                    <input th:value="${question.tag}" type="text" class="form-control" id="tag" name="tag" placeholder="输入标签.以逗号分隔">
                 </div>
 
                 <div class="alert alert-danger div-alert" role="alert"
@@ -50,6 +51,7 @@
         </div>
         <div class="col-lg-3 col-md-12">
             <h3>问题发起指南</h3>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             ·问题标题：请用精简的语言描述您发布的问题。不超过25个字
             <br>
             ·问题补充：详细补充您的问题内容，并确保问题描述清晰直观，并提供一些相关的资料

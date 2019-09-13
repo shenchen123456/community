@@ -3,17 +3,13 @@ package com.personal.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
-import com.personal.entity.User;
 import com.personal.mapper.QuestionMapper;
-import com.personal.mapper.UserMapper;
 import com.personal.service.QuestionService;
 import com.personal.vo.QuestionVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Auther: Chen
@@ -30,9 +26,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     PageHelper pageHelper;
 
-    @Autowired
-    UserMapper userMapper;
-
     public boolean insertQuestion(Question question){
         System.out.println(question);
         return questionMapper.insertQuestion(question);
@@ -41,10 +34,38 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public PageInfo<QuestionVO> getQuestions(Integer size, Integer currentPage) {
         pageHelper.startPage(currentPage,size);
-        List<QuestionVO> questions = questionMapper.getQuestionsWithUser();
-
-        PageInfo page = new PageInfo(questions);
-
+        List<QuestionVO> questionsWithUser = questionMapper.getAllQuestionWithUser();
+        PageInfo page = new PageInfo(questionsWithUser);
         return page;
     }
+
+    @Override
+    public QuestionVO findOneQuestionByIdWithUser(Integer id) {
+        QuestionVO question = questionMapper.findOneQuestionByIdWithUser(id);
+        return question;
+    }
+
+    @Override
+    public Question findOneById(Integer id) {
+        return questionMapper.findOneById(id);
+    }
+
+    @Override
+    public boolean checkQuestion(Question question) {
+
+        Question dbQuestion = questionMapper.findOneById(question.getId());
+
+        if(null != dbQuestion){
+            if(question.getTag().equals(dbQuestion.getTag()) &&
+                    question.getTitle().equals(dbQuestion.getTitle()) &&
+                    question.getDescription().equals(dbQuestion.getDescription())) {
+                return false;
+            }
+        }
+
+        boolean result = questionMapper.updateQuestion(question);
+
+        return result;
+    }
+
 }

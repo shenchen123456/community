@@ -1,5 +1,6 @@
 package com.personal.service;
 
+import com.personal.dto.GithubUser;
 import com.personal.entity.User;
 import com.personal.vo.UserVO;
 
@@ -15,10 +16,9 @@ public interface UserService {
 
     User findOneByToken(String token);
 
-    User findOneByAccountId(String accountId);
-
     User findOneByName(String name);
 
+    UserVO getUserWithAllQuestion(Integer id,Integer currentPage,Integer size);
 
-    UserVO findOneByIdWithQuestion(Integer id);
+    User checkUser(GithubUser user);
 }

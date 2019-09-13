@@ -8,9 +8,7 @@ import com.personal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +29,27 @@ public class PublishController {
     UserService userService;
 
     @GetMapping("/publish")
-    public String publish(HttpServletRequest httpServletRequest) {
+    public String publish() {
 
         return "publish";
     }
 
+    @GetMapping("/publish/{id}")
+    public String publish(@PathVariable("id")Integer id,
+                          Model model) {
+
+        Question question = questionService.findOneById(id);
+
+        model.addAttribute("question",question);
+
+        return "publish";
+    }
+
+
+
     @PostMapping("/publish")
     public String doPublish(
+            @RequestParam(value = "id",required = false) Integer id,
             @RequestParam(value = "title",required = false) String title,
             @RequestParam(value = "description" ,required = false) String description,
             @RequestParam(value = "tag",required = false) String tag,
@@ -65,13 +77,18 @@ public class PublishController {
 
         User user = userService.findOneByName(username);
 
-
-        questionService.insertQuestion(new Question()
+        boolean result = questionService.checkQuestion(new Question()
+                .setId(id)
                 .setTitle(title)
                 .setDescription(description)
                 .setTag(tag)
                 .setCreator(user.getId()));
 
-        return "publish";
+        if (result == false){
+            model.addAttribute("error","问题不存在");
+            return "publish";
+        }
+
+        return "redirect:/";
     }
 }

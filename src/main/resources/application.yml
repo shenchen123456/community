@@ -5,7 +5,7 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.230.129:3306/community?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&serverTimezone=UTC
     type: com.alibaba.druid.pool.DruidDataSource
 
     initialSize: 5
@@ -17,7 +17,7 @@ spring:
 
 github:
   clientId: 45433d33477f5f586e86
-  clientSecret: f954156e083523b3775aa2738f9db0426c1d95ca
+  clientSecret: e99d5e5e455c4eb87269c00a654527e397dc7c2b
   redirectUri: http://localhost:8080/callback
 
 

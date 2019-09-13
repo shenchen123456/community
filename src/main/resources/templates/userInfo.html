@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Title</title>
+    <title th:text="${section}"></title>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
 
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" th:href="@{css/community.css}"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
 
-    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
 
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
 </head>
 <body>
@@ -22,7 +22,7 @@
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12">
-            <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span>发现</h2>
+            <h2><span th:text="${sectionName}"></span></h2>
             <hr>
             <div id="context">
 
@@ -32,7 +32,10 @@
             </div>
         </div>
         <div class="col-lg-3 col-md-12">
-            <h3>热门话题</h3>
+            <div class="list-group userInfo-nav">
+                <a href="/userInfo/question" th:class="${section == 'question'}? 'list-group-item active' : 'list-group-item'">我的问题</a>
+                <a href="/userInfo/replies" th:class="${section == 'replies'}? 'list-group-item active' : 'list-group-item'">我的提问</a>
+            </div>
         </div>
     </div>
 </div>
@@ -44,11 +47,11 @@
 
     function to_page(currentPage) {
         $.ajax({
-            url: "/questions",
+            url: "/user/questions",
             data: "currentPage=" + currentPage,
             type: "GET",
             success: function (result) {
-                //构建问题
+                //构建我的问题
                 build_questions(result);
 
                 //构建分页
@@ -61,17 +64,16 @@
 
         $("#context").empty();
 
-        var questions = result.list;
+        var questions = result.pageInfo.list;
 
         $.each(questions, function (index, item) {
             var divBody = $("<div></div>").addClass("media");
 
-            var userImg = $("<img/>").addClass("media-object img-rounded user-img").attr("src", item.user.avatarUrl);
-            var img_a = $("<a></a>").attr("href", item.user.avatarUrl).append(userImg);
-            var divInnerLeft = $("<div></div>").addClass("media-left").append(img_a);
+            var userImg = $("<img/>").addClass("media-object img-rounded user-img").attr("src", result.avatarUrl);
+            var lianjie = $("<a></a>").attr("href", result.avatarUrl).append(userImg);
+            var divInnerLeft = $("<div></div>").addClass("media-left").append(lianjie);
 
-            var title_a = $("<a></a>").attr("href","/question/"+item.id).append(item.title);
-            var title = $("<h4></h4>").addClass("media-heading").append(title_a);
+            var title = $("<h4></h4>").addClass("media-heading").append(item.title);
             var description = $("<p></p>").append(item.description);
             var br = $("<br/>");
             var footer = $("<span></span>").addClass("text-desc").append(item.commentCount + "个回复 · " + item.viewCount + "次浏览 · " + item.createTime)
@@ -90,19 +92,19 @@
     function build_pageNav(result) {
         $("#pageNav").empty();
 
-        var prePage = result.prePage;
-        var nextPage = result.nextPage;
+        var prePage = result.pageInfo.prePage;
+        var nextPage = result.pageInfo.nextPage;
 
         var previous_span = $("<span></span>").attr("aria-hidden","true").append("&larr;");
         var previous_a = $("<a></a>").attr("href","#").append(previous_span).append(" Previous");
         var previous_li = $("<li></li>").addClass("previous").append(previous_a);
 
         //如果是第一页
-        if(result.hasPreviousPage == false){
+        if(result.pageInfo.hasPreviousPage == false){
             previous_li.addClass("disabled");
         }else {
             previous_li.click(function () {
-                to_page(result.pageNum - 1);
+                to_page(result.pageInfo.pageNum - 1);
             })
         }
 
@@ -111,11 +113,11 @@
         var next_li = $("<li></li>").addClass("next").append(next_a);
 
         //如果是最后一页
-        if(result.hasNextPage == false){
+        if(result.pageInfo.hasNextPage == false){
             next_li.addClass("disabled");
         }else {
             next_li.click(function () {
-                to_page(result.pageNum + 1);
+                to_page(result.pageInfo.pageNum + 1);
             })
         }
 
@@ -123,8 +125,6 @@
 
         $("#pageNav").append($("<nav></nav>").append(ul));
     }
-
-
 </script>
 
 </body>

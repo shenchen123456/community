@@ -1,5 +1,6 @@
 package com.personal;
 
+import com.github.pagehelper.PageInfo;
 import com.personal.entity.Question;
 import com.personal.entity.User;
 import com.personal.mapper.QuestionMapper;
@@ -30,8 +31,8 @@ public class CommunityApplicationTests {
     @Test
     public void testUserService() {
 
-        UserVO oneByIdWithQuestion = userService.findOneByIdWithQuestion(7);
-        System.out.println(oneByIdWithQuestion);
+        //UserVO oneByIdWithQuestion = userService.findOneQuestionByIdWithUser(1,1,3);
+        //System.out.println(oneByIdWithQuestion);
 
         //User one = userService.findOne(1);
         //System.out.println(one);
@@ -44,8 +45,12 @@ public class CommunityApplicationTests {
     @Test
     public void testQuestionService() {
 
-        //List<QuestionVO> questions = questionService.getQuestions(5, 1);
+        //PageInfo<QuestionVO> questions = questionService.getQuestions(3, 1);
         //System.out.println(questions);
+
+        QuestionVO oneQuestionByIdWithUser = questionService.findOneQuestionByIdWithUser(2);
+
+        System.out.println(oneQuestionByIdWithUser);
     }
 
 
