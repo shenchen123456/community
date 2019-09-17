@@ -1,5 +1,10 @@
 package com.personal.controller;
 
+import com.personal.dto.MessageDTO;
+import com.personal.entity.Notification;
+import com.personal.exception.CustomizeErrorEnum;
+import com.personal.provider.UserLoginProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +21,21 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class UserInfoController {
 
+    @Autowired
+    UserLoginProvider userLoginProvider;
+
+
     @GetMapping("/userInfo/{action}")
     public String userInfo(HttpServletRequest request,
                            @PathVariable("action")String action,
                            Model model){
 
-        if (null ==request.getSession().getAttribute("username")){
+        String username = (String) request.getSession().getAttribute("username");
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
+
+        boolean result = userLoginProvider.checkUserIsLogin(username,userId);
+
+        if (result == false){
             return "redirect:/";
         }
 

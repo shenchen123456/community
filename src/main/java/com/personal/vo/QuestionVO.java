@@ -1,11 +1,13 @@
 package com.personal.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.personal.entity.Comment;
 import com.personal.entity.Question;
 import com.personal.entity.User;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: Chen

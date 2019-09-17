@@ -6,26 +6,23 @@ package com.personal.enums;
  * @Description: com.personal.enums
  * @Version: 1.0.0
  */
-public enum CommentTypeEnum {
-    QUESTION(1),
-    COMMENT(2);
+public enum NotificationTypeEnum {
+    REPLY_QUESTION(1,"回复了问题"),
+    REPLY_COMMENT(2,"回复了评论");
 
     private Integer type;
+    private String message;
 
-    CommentTypeEnum(Integer type) {
+    NotificationTypeEnum(Integer type, String message) {
         this.type = type;
-    }
-
-    public static boolean isExist(Integer type) {
-        for (CommentTypeEnum commentTypeEnum : CommentTypeEnum.values()) {
-            if (commentTypeEnum.getType() == type){
-                return true;
-            }
-        }
-        return false;
+        this.message = message;
     }
 
     public Integer getType() {
         return type;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

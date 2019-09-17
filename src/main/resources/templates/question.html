@@ -22,35 +22,88 @@
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12">
-            <h4><span th:text="${question.title}"></span></h4>
-            <span class="text-desc">
-                作者:<span th:text="${question.user.name}"></span>
-                发布时间:<span th:text="${#dates.format(question.user. createTime,'yyyy-MM-dd HH:mm')}"></span>
-                阅读数:<span th:text="${question.viewCount}"></span>
-            </span>
 
-            <hr>
+            <!--正文-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h4 class="question_title"><span th:text="${question.title}"></span></h4>
+                <span class="text-desc">
+                    作者:<span th:text="${question.user.name}"></span>
+                    发布时间:<span th:text="${#dates.format(question.user. createTime,'yyyy-MM-dd HH:mm')}"></span>
+                    阅读数:<span th:text="${question.viewCount}"></span>
+                </span>
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
+                <!--描述-->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
 
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-            <a class="community-menu" th:href="@{'/publish/'+${question.id}}">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                编辑
-            </a>
+                <!--标签-->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <span class="label label-info question_tag" th:each="tag : ${question.tag.split(',')}">
+                        <span class="glyphicon glyphicon-tags"></span>
+                        <span class="label label-info" th:text="${tag}"></span>
+                    </span>
+                </div>
+
+
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                <a class="community-menu" th:if="${question.creator} == ${session.userId}"
+                   th:href="@{'/publish/'+${question.id}}">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span>
+                </a>
+            </div>
+
+            <!--回复列表-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h3><span th:text="${question.commentCount}"></span> 个回复</h3>
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment_sp">
+                <div id="comment_list" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                </div>
+
+                <!--二级回复-->
+            </div>
+
+            <!--回复输入框-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h3>提交回复</h3>
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment_sp">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_section">
+                    <div class="media">
+                        <div class="media-left">
+                            <a th:href="${question.user.avatarUrl}"><img class="media-object img-rounded user-img"
+                                                                         th:src="${question.user.avatarUrl}"></a>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading user-name" th:text="${question.user.name}"></h4>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="question_id" th:value="${question.id}">
+
+                    <textarea id="comment_content" class="form-control comment" cols="30" rows="10"></textarea>
+
+                    <button id="question_reply" type="submit" class="btn btn-success publish-btn">
+                        回复
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-3 col-md-12">
+
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4>发起人</h4>
                 <div class="media">
                     <div class="media-left">
                         <a th:href="${question.user.avatarUrl}">
-                            <img class="media-object img-circle user-img" th:src="${question.user.avatarUrl}">
+                            <img class="media-object img-roundedc user-img" th:src="${question.user.avatarUrl}">
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading" th:text="${question.user.name}"></h4>
+                        <h4 class="media-heading user-name" th:text="${question.user.name}"></h4>
                     </div>
                 </div>
             </div>
@@ -61,8 +114,222 @@
                 <h4>相关问题</h4>
             </div>
         </div>
+
     </div>
 </div>
+
+<script type="text/javascript">
+
+    $(function () {
+        get_comments();
+    })
+
+    //展示   问题回复的评论
+    $(document).on("click","[comment-id]",function () {
+
+        var commentId = $(this).attr("comment-id");
+        var collapde = $("[reply-id="+commentId+"]").attr("class");
+
+        if (collapde == "collapse") {
+            $("#"+commentId+" .media").remove();
+            $("[reply-id="+commentId+"]").addClass("in");
+            showComment(commentId);
+        } else {
+            $("[reply-id="+commentId+"]").removeClass("in");
+            $("#"+commentId+" .media").remove();
+        }
+    });
+
+    function showComment(commentId){
+        $.ajax({
+            url:"/question/reply/" + commentId,
+            type:"GET",
+            success: function (result) {
+                build_comment_reply(result,commentId);
+            }
+        })
+    }
+
+
+
+    //发送   问题回复的评论
+    $(document).on("click","[comment-id-btn]",function () {
+        var commentId = $(this).attr("comment-id-btn");
+        var content = $(this).prev().val();
+
+        $.ajax({
+            url:"/reply",
+            data: JSON.stringify({
+                "parentId": commentId,
+                "content": content,
+                "type": 2
+            }),
+            contentType: "application/json",
+            type:"PUT",
+            success: function (result) {
+                if (result.code == 200){
+                    get_comments();
+                    showComment(commentId);
+                }
+            }
+        })
+    });
+
+
+
+    function get_comments() {
+        var questionId = $("#question_id").val();
+
+        $.ajax({
+            url: "/question/" + questionId + "/comments",
+            type: "GET",
+            success: function (result) {
+                //构建评论
+                build_comment(result);
+            }
+        })
+    }
+
+    // <div class="media">
+    //        <div class="media-left">
+    //            <a href="#">
+    //            <img class="media-object img-rounded user-img" src="..." alt="...">
+    //            </a>
+    //        </div>
+    //        <div class="media-body">
+    //            <h5 class="media-heading">用户名</h5>
+    //            <div>内容</div>
+    //            <div class="menu">
+    //                <span class="glyphicon glyphicon-thumbs-up icon" aria-hidden="true"></span>
+    //                <span class="glyphicon glyphicon-comment icon" aria-hidden="true"></span>
+    //                <span class="pull-right">20111-55-11</span>
+    //            </div>
+    //        </div>
+    //    </div>
+
+
+    function build_comment(result) {
+        $("#comment_list").empty();
+
+        $.each(result, function (index, item) {
+
+            var userImg = $("<img/>").addClass("media-object img-rounded user-img").attr("src", item.user.avatarUrl);
+            var img_a = $("<a></a>").attr("href", item.user.avatarUrl).append(userImg);
+            var divInnerLeft = $("<div class='media-left'></div>").append(img_a);
+
+            var username = $("<h5></h5>").addClass("media-heading user-name").append(item.user.name);
+            var content = $("<div></div>").append(item.content);
+            var good_count = $("<span class='badge'></span>").append(item.likeCount);
+            var good_icon = $("<span class='glyphicon glyphicon-thumbs-up icon' aria-hidden='true'></span>").append(good_count);
+            var comment_count = $("<span class='badge'></span>").append(item.commentCount);
+            var comment_icon = $("<span class='glyphicon glyphicon-comment icon' aria-hidden='true'></span>").attr("comment-id",item.id).append(comment_count);//评论Id
+            var comment_date = $("<span class='pull-right'></span>").append(item.createTime);
+            var menu = $("<div class='menu'></div>").append(good_icon, comment_icon, comment_date);
+            var divInnerBody = $("<div class='media-body'></div>").append(username, content, menu);
+
+            //二级回复内容
+
+            var reply_text = $("<input type='text' class='form-control' placeholder='Search for...'>").empty();
+            var reply_btn = $("<button class='btn btn-success' type='button'>回复</button>");
+            var reply_span = $("<span class='input-group-btn'></span>").attr("comment-id-btn",item.id).append(reply_btn);
+            var reply_btn_div = $("<div class='input-group comment_input'></div>").append(reply_text,reply_span);
+            var reply_content = $("<div class='well'></div>").attr("id",item.id).append(reply_btn_div);
+            var reply_box = $("<div class='collapse'></div>").append(reply_content).attr("reply-id",item.id);;
+
+            var comment_div = $("<div class='media'></div>").append(divInnerLeft).append(divInnerBody);
+
+            $("#comment_list").append(comment_div,reply_box);
+        })
+
+    }
+
+    $("#question_reply").on("click",function () {
+        var questionId = $("#question_id").val();
+        var content = $("#comment_content").val();
+        $.ajax({
+            url: "/comment",
+            data: JSON.stringify({
+                "parentId": questionId,
+                "content": content,
+                "type": 1
+            }),
+            contentType: "application/json",
+            type: "POST",
+            success: function (result) {
+                if (result.code == 200) {
+                    $("#comment_section").hide();
+                    $("#comment_list").empty();
+                    get_comments();
+                } else {
+                    if (result.code == 2004) {
+                        var isAccept = confirm(result.message);
+                        if (isAccept) {
+                            window.open("https://github.com/login/oauth/authorize?client_id=45433d33477f5f586e86&redirect_uri=http://localhost:8080/callback&scope=user&state=1");
+                            window.localStorage.setItem("closable", true);
+                        }
+                    } else {
+                        alert(result.message)
+                    }
+                }
+            }
+        })
+    })
+
+
+    // <div class="collapse" id="collapse">
+    //     <div class="well">
+    //
+    //         <div class="media">
+    //              <div class="media-left">
+    //                 <a href="#"><img class="media-object img-rounded user-img" src="..." alt="...">
+    //                 </a>
+    //              </div>
+    //              <div class="media-body">
+    //                   <h5 class="media-heading">用户名</h5>
+    //                   <div>内容</div>
+    //                   <div class="menu">
+    //                     <span class="glyphicon glyphicon-thumbs-up icon" aria-hidden="true"></span>
+    //                     <span class="glyphicon glyphicon-comment icon" aria-hidden="true"></span>
+    //                     <span class="pull-right">20111-55-11</span>
+    //                   </div>
+    //             </div>
+    //          </div>
+    //          <div class="input-group comment_input">
+    //             <input type="text" class="form-control" placeholder="Search for...">
+    //             <span class="input-group-btn">
+    //                 <button class="btn btn-success" type="button">回复</button>
+    //             </span>
+    //         </div>
+    //    </div>
+
+
+    function build_comment_reply(result,id) {
+        $("#"+id .media).empty();
+
+        $.each(result, function (index, item) {
+
+            var userImg = $("<img/>").addClass("media-object img-rounded user-img").attr("src", item.user.avatarUrl);
+            var img_a = $("<a></a>").attr("href", item.user.avatarUrl).append(userImg);
+            var divInnerLeft = $("<div class='media-left'></div>").append(img_a);
+
+            var username = $("<h5></h5>").addClass("media-heading user-name").append(item.user.name);
+            var content = $("<div></div>").append(item.content);
+            var good_count = $("<span class='badge'></span>").append(item.likeCount);
+            var good_icon = $("<span class='glyphicon glyphicon-thumbs-up icon' aria-hidden='true'></span>").append(good_count);
+            var comment_date = $("<span class='pull-right'></span>").append(item.createTime);
+            var menu = $("<div class='menu'></div>").append(good_icon, comment_date);
+            var divInnerBody = $("<div class='media-body'></div>").append(username, content, menu);
+
+            var comment_div = $("<div class='media'></div>").append(divInnerLeft).append(divInnerBody);
+
+            $("#"+id).prepend(comment_div);
+
+        })
+
+
+    }
+
+</script>
 
 </body>
 </html>

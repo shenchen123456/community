@@ -26,6 +26,7 @@ public class LogOutController {
 
         request.getSession().removeAttribute("username");
         request.getSession().removeAttribute("userId");
+        request.getSession().removeAttribute("unreadCount");
 
         Cookie cookie = new Cookie("token",null);
         cookie.setMaxAge(0);

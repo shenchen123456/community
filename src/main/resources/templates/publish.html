@@ -15,7 +15,6 @@
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
-//头信息
 <div th:replace="header :: navigation"></div>
 
 
@@ -25,18 +24,41 @@
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true">发起</span></h2>
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <form action="/publish" method="post">
-                <input type="hidden" name="id" th:value="${question.id}">
+                <input type="hidden" name="id" th:value="${question?.id}">
                 <div class="form-group div-title">
                     <label for="title">问题标题 (简明扼要) :</label>
-                    <input th:value="${question.title}" type="text" class="form-control" id="title" name="title" placeholder="问题标题....">
+                    <input th:value="${title} != null ?${title}:${question?.title}" type="text" class="form-control"
+                           id="title" name="title" placeholder="问题标题...." autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <label for="title">问题补充 (必填,请参照右侧) :</label>
-                    <textarea th:text="${question.description}" class="form-control" name="description" id="description" cols="30" rows="10" ></textarea>
+                    <label for="description">问题补充 (必填,请参照右侧) :</label>
+                    <textarea th:text="${description} != null ?${description}:${question?.description}"
+                              class="form-control" name="description" id="description" cols="30" rows="10"></textarea>
                 </div>
-                <div class="form-group div-tag">
+                <div class="form-group">
                     <label for="tag">添加标签</label>
-                    <input th:value="${question.tag}" type="text" class="form-control" id="tag" name="tag" placeholder="输入标签.以逗号分隔">
+                    <input th:value="${tag} != null ?${tag}:${question?.tag}" type="text" class="form-control" id="tag"
+                           name="tag" placeholder="输入标签.以逗号分隔" autocomplete="off" onclick="showSelectTag()">
+
+                    <div id="select-tag" class="publish-tag-lib">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" th:each="selectCategory,selectCategoryStat: ${tags}" th:class="${selectCategoryStat.first ? 'activ':''}">
+                                <a th:text="${selectCategory.categoryName}" th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab" data-toggle="tab">开发语言</a>
+                            </li>
+
+                        </ul>
+                        <div class="tab-content">
+                            <div th:each="selectCategory : ${tags}"
+                                 th:id="${selectCategory.categoryName}"
+                                 th:class="${selectCategoryStat.first ? 'activ tab-content':'tab-content'}"
+                                 role="tabpanel" class="tab-pane">
+                                 <span th:each="selectTagName : ${selectCategory.tags}" th:data-tag="${selectTagName}" class="label label-info" onclick="selectTag(this)">
+                                     <span th:text="${' '+selectTagName}" class="glyphicon glyphicon-tags">Java</span>
+                                 </span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="alert alert-danger div-alert" role="alert"
@@ -61,6 +83,24 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    function selectTag(e) {
+        var value = e.getAttribute("data-tag");
+        var previous = $("#tag").val();
+        if (previous.indexOf(value) == -1) {
+            if (previous) {
+                $("#tag").val(previous + ',' + value);
+            } else {
+                $("#tag").val(value);
+            }
+        }
+    }
 
+    function showSelectTag() {
+        $("#select-tag").show();
+    }
+
+
+</script>
 </body>
 </html>

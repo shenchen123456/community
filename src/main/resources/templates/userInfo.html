@@ -33,8 +33,14 @@
         </div>
         <div class="col-lg-3 col-md-12">
             <div class="list-group userInfo-nav">
-                <a href="/userInfo/question" th:class="${section == 'question'}? 'list-group-item active' : 'list-group-item'">我的问题</a>
-                <a href="/userInfo/replies" th:class="${section == 'replies'}? 'list-group-item active' : 'list-group-item'">我的提问</a>
+                <a id="my_question" href="/userInfo/question"
+                   th:class="${section == 'question'}? 'list-group-item active' : 'list-group-item'">我的问题</a>
+                <a id="my_notification" href="/userInfo/replies"
+                   th:class="${section == 'replies'}? 'list-group-item active' : 'list-group-item'">
+                    最新回复
+                    <!--TODO-->
+                    <span class="badge" th:text="${session.unreadCount}">14</span>
+                </a>
             </div>
         </div>
     </div>
@@ -42,10 +48,104 @@
 
 <script type="text/javascript">
     $(function () {
-        to_page(1);
+        questionOrNotification();
     })
 
-    function to_page(currentPage) {
+    function questionOrNotification() {
+
+        var active = $("#my_question").attr("class");
+
+        if (active == "list-group-item active") {
+            to_quesiton_page(1);
+        } else {
+            to_notification_page(1)
+        }
+    }
+
+    $(document).on("click","[notification_id]",function () {
+        var notificationId = $(this).attr("notification_id");
+        var notificationType = $(this).attr("notification_type");
+        $.ajax({
+            url:"/notification",
+            data:JSON.stringify({
+                "id": notificationId,
+                "type": notificationType
+            }),
+            type:"POST",
+            contentType: "application/json",
+            success:function (result) {
+                window.location.href=result;
+            }
+        })
+    })
+
+
+
+    function to_notification_page(currentPage) {
+        $.ajax({
+            url: "/user/replies",
+            data: "currentPage=" + currentPage,
+            type: "GET",
+            success: function (result) {
+                //构建我的消息
+                build_notification(result);
+
+                //构建分页
+                build_pageNav(result);
+            }
+        })
+    }
+
+    // <div>
+    //      <span class="notification">
+    //          <a href="#">某某莫</a>
+    //      </span>
+    //      <span class="notification">&nbsp&nbsp&nbsp&nbsp回复了问题&nbsp&nbsp&nbsp&nbsp</span>
+    //      <span class="notification">
+    //         <a href="#">
+    //               问题title
+    //               <span class="badge new_icon">New</span>
+    //         </a>
+    //     </span>
+    // </div>
+
+    function build_notification(result) {
+        $("#context").empty();
+
+        $.each(result.list, function (index, item) {
+
+            var str;
+            if (item.type == 1) {
+                str = "回复了问题";
+            } else if (item.type == 2) {
+                str = "回复了评论";
+            }
+
+
+            var username_a = $("<a href='#'></a>").text(item.notifierName);
+            var username_span = $("<span class='notification'></span>").append(username_a);
+
+            var reply = $("<span class='notification'></span>").text("  "+str+"  ");
+
+            if (item.status == 0) {
+                var new_icon = $("<span class='badge new_icon'>New</span>");
+                var description_a = $("<a></a>").text(item.content).append(new_icon);
+            }else if (item.status == 1){
+                var description_a = $("<a></a>").text(item.content);
+            }
+            var description_span = $("<span class='notification'></span>").attr({"notification_id":item.id,"notification_type":item.type}).append(description_a);
+
+            var notification_box = $("<div></div>");
+
+            notification_box.append(username_span,reply,description_span);
+
+            $("#context").append(notification_box);
+        })
+
+    }
+
+
+    function to_quesiton_page(currentPage) {
         $.ajax({
             url: "/user/questions",
             data: "currentPage=" + currentPage,
@@ -55,10 +155,15 @@
                 build_questions(result);
 
                 //构建分页
-                build_pageNav(result);
+                build_pageNav(result.pageInfo);
             }
         })
     }
+
+    // <a class="community-menu" th:if="${question.creator} == ${session.userId}"
+    //     th:href="@{'/publish/'+${question.id}}">
+    //         <span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span>
+    //     </a>
 
     function build_questions(result) {
 
@@ -73,15 +178,17 @@
             var lianjie = $("<a></a>").attr("href", result.avatarUrl).append(userImg);
             var divInnerLeft = $("<div></div>").addClass("media-left").append(lianjie);
 
-            var title = $("<h4></h4>").addClass("media-heading").append(item.title);
+            var title_a = $("<a></a>").attr("href", "/question/" + item.id).append(item.title);
+            var title = $("<h4></h4>").addClass("media-heading").append(title_a);
             var description = $("<p></p>").append(item.description);
-            var br = $("<br/>");
-            var footer = $("<span></span>").addClass("text-desc").append(item.commentCount + "个回复 · " + item.viewCount + "次浏览 · " + item.createTime)
+            var footer = $("<span></span>").addClass("text-desc").append(item.commentCount + "个回复 · " + item.viewCount + "次浏览 · " + item.createTime + " · ");
+            var edit_icon = $("<span class='glyphicon glyphicon-pencil' aria-hidden='true'>编辑</span>");
+            var edit = $("<a class='community-menu'></a>").attr("href", "/publish/" + item.id).append(edit_icon);
             var divInnerBody = $("<div></div>").addClass("media-body")
                 .append(title)
                 .append(description)
-                .append(br)
-                .append(footer);
+                .append(footer)
+                .append(edit);
 
             divBody.append(divInnerLeft).append(divInnerBody);
 
@@ -89,35 +196,45 @@
         })
     }
 
-    function build_pageNav(result) {
+    function build_pageNav(pageInfo) {
         $("#pageNav").empty();
 
-        var prePage = result.pageInfo.prePage;
-        var nextPage = result.pageInfo.nextPage;
-
-        var previous_span = $("<span></span>").attr("aria-hidden","true").append("&larr;");
-        var previous_a = $("<a></a>").attr("href","#").append(previous_span).append(" Previous");
+        var previous_span = $("<span></span>").attr("aria-hidden", "true").append("&larr;");
+        var previous_a = $("<a></a>").attr("href", "#").append(previous_span).append(" Previous");
         var previous_li = $("<li></li>").addClass("previous").append(previous_a);
 
         //如果是第一页
-        if(result.pageInfo.hasPreviousPage == false){
+        if (pageInfo.hasPreviousPage == false) {
             previous_li.addClass("disabled");
-        }else {
+        } else {
+
             previous_li.click(function () {
-                to_page(result.pageInfo.pageNum - 1);
+                var active = $("#my_question").attr("class");
+
+                if (active == "list-group-item active") {
+                    to_quesiton_page(pageInfo.pageNum - 1);
+                } else {
+                    to_notification_page(pageInfo.pageNum - 1)
+                }
             })
         }
 
-        var next_span = $("<span></span>").attr("aria-hidden","true").append("&rarr;");
-        var next_a = $("<a></a>").attr("href","#").append(next_span).append("nextPage");
+        var next_span = $("<span></span>").attr("aria-hidden", "true").append("&rarr;");
+        var next_a = $("<a></a>").attr("href", "#").append(next_span).append("nextPage");
         var next_li = $("<li></li>").addClass("next").append(next_a);
 
         //如果是最后一页
-        if(result.pageInfo.hasNextPage == false){
+        if (pageInfo.hasNextPage == false) {
             next_li.addClass("disabled");
-        }else {
+        } else {
             next_li.click(function () {
-                to_page(result.pageInfo.pageNum + 1);
+                var active = $("#my_question").attr("class");
+
+                if (active == "list-group-item active") {
+                    to_quesiton_page(pageInfo.pageNum + 1);
+                } else {
+                    to_notification_page(pageInfo.pageNum + 1)
+                }
             })
         }
 

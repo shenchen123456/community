@@ -14,6 +14,18 @@
     <script src="js/bootstrap.min.js"></script>
 
 </head>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var closable = window.localStorage.getItem("closable");
+        if (closable == "true"){
+            window.close();
+            window.localStorage.removeItem(closable);
+        }
+    }
+
+</script>
+
 <body>
 <!--头信息-->
 <div th:replace="header :: navigation"></div>
@@ -71,7 +83,7 @@
             var divInnerLeft = $("<div></div>").addClass("media-left").append(img_a);
 
             var title_a = $("<a></a>").attr("href","/question/"+item.id).append(item.title);
-            var title = $("<h4></h4>").addClass("media-heading").append(title_a);
+            var title = $("<h4></h4>").addClass("media-heading user-name").append(title_a);
             var description = $("<p></p>").append(item.description);
             var br = $("<br/>");
             var footer = $("<span></span>").addClass("text-desc").append(item.commentCount + "个回复 · " + item.viewCount + "次浏览 · " + item.createTime)

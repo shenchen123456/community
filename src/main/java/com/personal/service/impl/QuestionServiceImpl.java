@@ -55,20 +55,24 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean checkQuestion(Question question) {
+    public boolean questionCreateOrUpdate(Question question) {
 
         Question dbQuestion = questionMapper.findOneById(question.getId());
 
-        if(null != dbQuestion){
-            if(question.getTag().equals(dbQuestion.getTag()) &&
-                    question.getTitle().equals(dbQuestion.getTitle()) &&
-                    question.getDescription().equals(dbQuestion.getDescription())) {
-                throw new CustomizeException(CustomizeErrorEnum.QUESTION_NOT_MODIFY);
-            }
+        if(null == dbQuestion){
+            return questionMapper.insertQuestion(question);
         }
+
+        if(question.getTag().equals(dbQuestion.getTag()) &&
+                question.getTitle().equals(dbQuestion.getTitle()) &&
+                question.getDescription().equals(dbQuestion.getDescription())) {
+            throw new CustomizeException(CustomizeErrorEnum.QUESTION_NOT_MODIFY);
+        }
+
+
         boolean result = questionMapper.updateQuestion(question);
 
-        if (false == result) {
+        if (!result) {
             throw new CustomizeException(CustomizeErrorEnum.QUESTION_NOT_FOUND);
         }
 

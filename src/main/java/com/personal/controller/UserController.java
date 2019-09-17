@@ -31,6 +31,9 @@ public class UserController {
         //TODO
         //userId可能为空
 
+        if (userId == null || userId == 0){
+            return null;
+        }
         return userService.getUserWithAllQuestion(userId,currentPage,size);
     }
 }

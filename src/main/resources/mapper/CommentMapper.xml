@@ -9,8 +9,10 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="like_count" jdbcType="INTEGER" property="likeCount" />
+    <result column="comment_count" jdbcType="INTEGER" property="commentCount" />
     <result column="content" jdbcType="VARCHAR" property="content" />
   </resultMap>
+
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -70,7 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, parent_id, type, commentor, create_time, update_time, like_count, content
+    id, parent_id, type, commentor, create_time, update_time, like_count, comment_count, 
+    content
   </sql>
   <select id="selectByExample" parameterType="com.personal.entity.CommentExample" resultMap="BaseResultMap">
     select
@@ -105,10 +108,12 @@
   <insert id="insert" parameterType="com.personal.entity.Comment">
     insert into comment (id, parent_id, type, 
       commentor, create_time, update_time, 
-      like_count, content)
+      like_count, comment_count, content
+      )
     values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
       #{commentor,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{likeCount,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR})
+      #{likeCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.personal.entity.Comment">
     insert into comment
@@ -133,6 +138,9 @@
       </if>
       <if test="likeCount != null">
         like_count,
+      </if>
+      <if test="commentCount != null">
+        comment_count,
       </if>
       <if test="content != null">
         content,
@@ -159,6 +167,9 @@
       </if>
       <if test="likeCount != null">
         #{likeCount,jdbcType=INTEGER},
+      </if>
+      <if test="commentCount != null">
+        #{commentCount,jdbcType=INTEGER},
       </if>
       <if test="content != null">
         #{content,jdbcType=VARCHAR},
@@ -195,6 +206,9 @@
       <if test="record.likeCount != null">
         like_count = #{record.likeCount,jdbcType=INTEGER},
       </if>
+      <if test="record.commentCount != null">
+        comment_count = #{record.commentCount,jdbcType=INTEGER},
+      </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=VARCHAR},
       </if>
@@ -212,6 +226,7 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       like_count = #{record.likeCount,jdbcType=INTEGER},
+      comment_count = #{record.commentCount,jdbcType=INTEGER},
       content = #{record.content,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -238,6 +253,9 @@
       <if test="likeCount != null">
         like_count = #{likeCount,jdbcType=INTEGER},
       </if>
+      <if test="commentCount != null">
+        comment_count = #{commentCount,jdbcType=INTEGER},
+      </if>
       <if test="content != null">
         content = #{content,jdbcType=VARCHAR},
       </if>
@@ -252,6 +270,7 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       like_count = #{likeCount,jdbcType=INTEGER},
+      comment_count = #{commentCount,jdbcType=INTEGER},
       content = #{content,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>

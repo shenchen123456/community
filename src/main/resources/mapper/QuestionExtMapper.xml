@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.personal.mapper.QuestionExtMapper">
-  <resultMap id="BaseResultMap" type="com.personal.entity.Comment">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="commentor" jdbcType="INTEGER" property="commentor" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="like_count" jdbcType="INTEGER" property="likeCount" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-  </resultMap>
 
   <update id="incrementView" parameterType="com.personal.entity.Question">
     update question

@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.personal.entity.Notification">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="notifier" jdbcType="INTEGER" property="notifier" />
+    <result column="notifier_name" jdbcType="VARCHAR" property="notifierName" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="receiver" jdbcType="INTEGER" property="receiver" />
     <result column="outer_id" jdbcType="INTEGER" property="outerId" />
     <result column="type" jdbcType="INTEGER" property="type" />
@@ -70,7 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, notifier, receiver, outer_id, type, create_time, update_time, status
+    id, notifier, notifier_name, content, receiver, outer_id, type, create_time, update_time, 
+    status
   </sql>
   <select id="selectByExample" parameterType="com.personal.entity.NotificationExample" resultMap="BaseResultMap">
     select
@@ -103,12 +106,14 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.personal.entity.Notification">
-    insert into notification (id, notifier, receiver, 
-      outer_id, type, create_time, 
-      update_time, status)
-    values (#{id,jdbcType=INTEGER}, #{notifier,jdbcType=INTEGER}, #{receiver,jdbcType=INTEGER}, 
-      #{outerId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER})
+    insert into notification (id, notifier, notifier_name, 
+      content, receiver, outer_id, 
+      type, create_time, update_time, 
+      status)
+    values (#{id,jdbcType=INTEGER}, #{notifier,jdbcType=INTEGER}, #{notifierName,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{receiver,jdbcType=INTEGER}, #{outerId,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.personal.entity.Notification">
     insert into notification
@@ -118,6 +123,12 @@
       </if>
       <if test="notifier != null">
         notifier,
+      </if>
+      <if test="notifierName != null">
+        notifier_name,
+      </if>
+      <if test="content != null">
+        content,
       </if>
       <if test="receiver != null">
         receiver,
@@ -144,6 +155,12 @@
       </if>
       <if test="notifier != null">
         #{notifier,jdbcType=INTEGER},
+      </if>
+      <if test="notifierName != null">
+        #{notifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
       </if>
       <if test="receiver != null">
         #{receiver,jdbcType=INTEGER},
@@ -180,6 +197,12 @@
       <if test="record.notifier != null">
         notifier = #{record.notifier,jdbcType=INTEGER},
       </if>
+      <if test="record.notifierName != null">
+        notifier_name = #{record.notifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
       <if test="record.receiver != null">
         receiver = #{record.receiver,jdbcType=INTEGER},
       </if>
@@ -207,6 +230,8 @@
     update notification
     set id = #{record.id,jdbcType=INTEGER},
       notifier = #{record.notifier,jdbcType=INTEGER},
+      notifier_name = #{record.notifierName,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=VARCHAR},
       receiver = #{record.receiver,jdbcType=INTEGER},
       outer_id = #{record.outerId,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER},
@@ -222,6 +247,12 @@
     <set>
       <if test="notifier != null">
         notifier = #{notifier,jdbcType=INTEGER},
+      </if>
+      <if test="notifierName != null">
+        notifier_name = #{notifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
       </if>
       <if test="receiver != null">
         receiver = #{receiver,jdbcType=INTEGER},
@@ -247,6 +278,8 @@
   <update id="updateByPrimaryKey" parameterType="com.personal.entity.Notification">
     update notification
     set notifier = #{notifier,jdbcType=INTEGER},
+      notifier_name = #{notifierName,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
       receiver = #{receiver,jdbcType=INTEGER},
       outer_id = #{outerId,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},

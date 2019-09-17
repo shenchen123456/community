@@ -18,7 +18,7 @@ public interface QuestionService {
 
     Question findOneById(Integer id);
 
-    boolean checkQuestion(Question question);
+    boolean questionCreateOrUpdate(Question question);
 
     void incrementView(Integer id);
 }

@@ -6,20 +6,20 @@ package com.personal.enums;
  * @Description: com.personal.enums
  * @Version: 1.0.0
  */
-public enum NotificationTypeEnum {
-    REPLY_QUESTION(1,"回复了问题"),
-    REPLY_COMMENT(1,"回复了评论");
+public enum NotificationStatusEnum {
+    UNREAD(0,"未读通知"),
+    READ(1,"已读通知");
 
-    private Integer type;
+    private Integer status;
     private String message;
 
-    NotificationTypeEnum(Integer type, String message) {
-        this.type = type;
+    NotificationStatusEnum(Integer status, String message) {
+        this.status = status;
         this.message = message;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getStatus() {
+        return status;
     }
 
     public String getMessage() {
