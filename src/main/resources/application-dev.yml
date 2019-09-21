@@ -1,0 +1,44 @@
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&serverTimezone=UTC
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 10000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+
+github:
+  clientId: 45433d33477f5f586e86
+  clientSecret: 0301d4488420a155437bdb1d5eba89507d375eb0
+  redirectUri: http://localhost:8080/callback
+
+ucloud:
+  ufile:
+    public-key: TOKEN_3e119b55-8e5e-4eb7-9823-033716b9d8ae
+    private-key: a6b0a0e1-f6c1-4b01-b669-244123d6818e
+    bucket-name: my-community-test
+    region: cn-bj
+    proxy-suffix: ufileos.com
+    expires: 86400
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  file:
+    max-size: 200MB
+    max-history: 30
+  level:
+    root: info
+  path: ./logs
+
